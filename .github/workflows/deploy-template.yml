@@ -75,6 +75,19 @@ jobs:
       - name: Refresh env
         run: azd env refresh
 
+      # Create new environment
+      - name: Create env for
+        run: azd env new ${{ inputs.AZURE_ENV_NAME }}
+        env:
+          AZURE_ENV_NAME: ${{ inputs.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # Refresh environment
+      - name: Refresh env
+        run: azd env refresh
+
+
       - name: Package Services
         run: azd package --no-prompt
         env:
