@@ -64,20 +64,24 @@ jobs:
   ## 
       
       # Create new environment
-      - name: Create env for
-        #if: ${{ "(azd env list)" == *"inputs.AZURE_ENV_NAME"* }}
-        #if: ${{azd env list | grep -q "inputs.AZURE_ENV_NAME"}}
+      - name: Check if 'dev' environment exists
+        id: check-env
         run: |
-          if azd env list | grep -q ${{ inputs.AZURE_ENV_NAME }}; then
+          if azd env list | grep -q "dev"; then
             echo "${{ inputs.AZURE_ENV_NAME }} environment exists"
+            echo "::set-output name=env_exists::true"
           else
-            echo "creating dev environment"
-            run: azd env new ${{ inputs.AZURE_ENV_NAME }}
-            env:
-              AZURE_ENV_NAME: ${{ inputs.AZURE_ENV_NAME }}
-              AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
-              AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+            echo "${{ inputs.AZURE_ENV_NAME }} environment does not exist"
+            echo "::set-output name=env_exists::false"
           fi
+  
+      - name: Conditional step based on environment check
+        if: steps.check-env.outputs.env_exists == 'true'
+        run: azd env new ${{ inputs.AZURE_ENV_NAME }}
+        env:
+          AZURE_ENV_NAME: ${{ inputs.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       # Refresh environment
       - name: Refresh env
