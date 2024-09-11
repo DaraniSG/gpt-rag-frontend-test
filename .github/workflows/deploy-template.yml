@@ -62,7 +62,13 @@ jobs:
   ##
   ## [ Darani Sai G@14-08-2024 ] Removed Provision Infrastructure task, If infrastructure not providioned yet, Please gothrough GPT-RAG (v2) steps.
   ## 
-      
+      - name: Test true
+        run: azd env new ${{ inputs.AZURE_ENV_NAME }} --no-prompt
+        env:
+          AZURE_ENV_NAME: ${{ inputs.AZURE_ENV_NAME }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
       # Create new environment
       - name: Check if '${{ inputs.AZURE_ENV_NAME }}' environment exists
         id: check-env
