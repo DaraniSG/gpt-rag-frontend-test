@@ -68,9 +68,8 @@ jobs:
         #if: ${{ "(azd env list)" == *"inputs.AZURE_ENV_NAME"* }}
         #if: ${{azd env list | grep -q "inputs.AZURE_ENV_NAME"}}
         run: |
-          if azd env list | grep -q "dev"; then
-            echo "dev environment exists"
-            echo "::set-output name=dev_exists::true"
+          if azd env list | grep -q ${{ inputs.AZURE_ENV_NAME }}; then
+            echo "${{ inputs.AZURE_ENV_NAME }} environment exists"
           else
             echo "creating dev environment"
             run: azd env new ${{ inputs.AZURE_ENV_NAME }}
