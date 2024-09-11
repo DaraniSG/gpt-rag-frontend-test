@@ -1,1 +1,1 @@
-{"name": "DaraniSG-gpt-rag-frontend-test-dev", "issuer": "https://token.actions.githubusercontent.com", "subject": "repo:DaraniSG/gpt-rag-frontend-test:environment:dev", "description": "dev environment", "audiences": ["api://AzureADTokenExchange"]}
+{"name": "DaraniSG-gpt-rag-frontend-test-test", "issuer": "https://token.actions.githubusercontent.com", "subject": "repo:DaraniSG/gpt-rag-frontend-test:environment:test", "description": "test environment", "audiences": ["api://AzureADTokenExchange"]}
