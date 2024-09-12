@@ -23,7 +23,7 @@ This document outlines the steps to set up a multi-environment workflow to deplo
 
 # Prerequisites:
 
-- The infrastructure must be created using GPT-RAG-V2 before proceeding
+- Assumes that the infrastructure creation already completed using GPT-RAG-V2.
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli) with [Azure DevOps extension](https://learn.microsoft.com/en-us/azure/devops/cli/?view=azure-devops)
 - [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows%2Cbrew-mac%2Cscript-linux&pivots=os-windows)
 - [PowerShell 7](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.4)

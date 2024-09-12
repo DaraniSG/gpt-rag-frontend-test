@@ -12,7 +12,7 @@ This document outlines the steps to set up a multi-environment workflow to deplo
 - Decisions on which GitHub repository, Azure subscription, and Azure location to use
 
 # Prerequisites:
-
+- Assumes that the infrastructure creation already completed using GPT-RAG-V2.
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli)
 - [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd?tabs=winget-windows%2Cbrew-mac%2Cscript-linux&pivots=os-windows)
 - [GitHub CLI](https://cli.github.com/)
@@ -49,15 +49,6 @@ dev_principal_name='<dev-sp-name>'
 test_principal_name='<test-sp-name>'
 prod_principal_name='<prod-sp-name>'
 ```
-
-### `azd` environments
-
-Next, you will create an `azd` environment per target environment alongside a pipeline definition. In this guide, pipeline definitions are created with `azd pipeline config`. Read more about azd pipeline config [here](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/configure-devops-pipeline?tabs=azdo). View the CLI documentation [here](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/reference#azd-pipeline-config).
-
-For each below environment, when running `azd pipeline config` for each environment, choose your target Azure subscription and Azure location. When prompted to commit and push your local changes to start the configured CI pipeline, enter 'N'.
-
-> [!CAUTION]
-> If you choose 'Y' to commit and push your local changes, the pipeline will be triggered, and you may not have the necessary environments or variables set up yet, causing the pipeline to fail. The remaining setup steps must be completed before the pipeline will run successfully.
 
 Login to Azure:
 
@@ -132,7 +123,11 @@ Set these values as variables at the environment level:
 gh variable set AZURE_CLIENT_ID -b $dev_client_id -e $dev_env
 gh variable set AZURE_CLIENT_ID -b $test_client_id -e $test_env
 gh variable set AZURE_CLIENT_ID -b $prod_client_id -e $prod_env
+```
 
+Set these values as variables at the repository level:
+
+```bash
 gh variable set AZURE_LOCATION -b $rg_location
 gh variable set AZURE_SUBSCRIPTION_ID -b $SUBSCRIPTION_ID
 gh variable set AZURE_TENANT_ID -b $TENANT_ID
