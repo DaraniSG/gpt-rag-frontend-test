@@ -5,18 +5,6 @@ This document outlines the steps to set up a multi-environment workflow to deplo
 > [!NOTE]
 > Note that additional steps not currently covered in this guide may be required when working with the Zero Trust Architecture Deployment to handle deploying to a network-isolated environment.
 
-# Assumptions:
-
-- This example assumes you're using a GitHub organization with GitHub environments
-- This example deploys the infrastructure in the same pipeline as all of the services.
-- This example deploys three environments: dev, test, and prod. You may modify the number and names of environments as needed.
-- This example uses [`azd pipeline config`](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/configure-devops-pipeline?tabs=azdo) to rapidly set up GitHub workflows and federated identity configuration for enhanced security.
-- All below commands are run as a one-time setup on a local machine by an admin who has access to the GitHub Repository and Azure tenant.
-- This example does not cover configuring any naming conventions.
-- The original remote versions of the [orchestrator](https://github.com/Azure/gpt-rag-orchestrator), [frontend](https://github.com/Azure/gpt-rag-frontend), and [ingestion](https://github.com/Azure/gpt-rag-ingestion) repositories are used; in a real scenario, you would fork these repositories and use your forked versions. This would require updating the repository URLs in the `scripts/fetchComponents.*` files.
-- This example uses federated identity for authentication. If you prefer to use client secret authentication, you will need to modify the workflow files accordingly.
-- Bicep is the IaC language used in this example.
-
 # Decisions required:
 
 - Service Principals that will be used for each environment
@@ -77,43 +65,6 @@ Login to Azure:
 az login
 ```
 
-#### Dev
-
-```bash
-azd env new $dev_env
-azd pipeline config --auth-type federated --principal-name $dev_principal_name --provider github
-```
-
-#### Test
-
-```bash
-azd env new $test_env
-azd pipeline config --auth-type federated --principal-name $test_principal_name --provider github
-```
-
-#### Prod
-
-```bash
-azd env new $prod_env
-azd pipeline config --auth-type federated --principal-name $prod_principal_name --provider github
-```
-
-> [!NOTE]
-> Note that `azd pipeline config` creates a new Service Principal for each environment.
-
-> [!NOTE]
-> By default, `azd pipeline config` uses OpenID Connect (OIDC), called federated credentials. If you'd rather not use OIDC, run `azd pipeline config --auth-type client-credentials`. This scenario is not covered in this guide.
-
-After performing the above steps, you will see corresponding files to your azd environments in the `.azure` folder.
-
-If you run `azd env list`, you will see the newly created environments.
-
-You may change the default environment by running `azd env select <env-name>`, for example:
-
-```bash
-azd env select $dev_env
-```
-
 ## 2. Set up GitHub Environments
 
 ### Environment setup
@@ -123,6 +74,10 @@ Set up initial variables:
 ```bash
 org='<your-org-name>'
 repo='<your-repo-name>'
+
+subscription_id=$(az account show --query "id" --output tsv)
+rg_location='<your-resource group-location>'
+
 ```
 
 Run GitHub CLI commands to create the environments:
@@ -163,12 +118,24 @@ prod_client_id=$(az ad sp list --display-name $prod_principal_name --query "[].a
 >
 > Also note you may get the client IDs from the Azure Portal.
 
+Set up initial variables:
+
+```bash
+TENANT_ID=$(az ad sp show --id $dev_client_id --query "appOwnerOrganizationId" --output tsv)
+SUBSCRIPTION_ID=$(az account show --query "id" --output tsv)
+SUBSCRIPTION_NAME=$(az account show --query "name" --output tsv)
+```
+
 Set these values as variables at the environment level:
 
 ```bash
 gh variable set AZURE_CLIENT_ID -b $dev_client_id -e $dev_env
 gh variable set AZURE_CLIENT_ID -b $test_client_id -e $test_env
 gh variable set AZURE_CLIENT_ID -b $prod_client_id -e $prod_env
+
+gh variable set AZURE_LOCATION -b $rg_location
+gh variable set AZURE_SUBSCRIPTION_ID -b $SUBSCRIPTION_ID
+gh variable set AZURE_TENANT_ID -b $TENANT_ID
 ```
 
 > [!TIP]

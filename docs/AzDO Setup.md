@@ -102,7 +102,7 @@ az devops configure --defaults organization=https://dev.azure.com/$org project=$
 ```
 
 
-**Setup:** Set up the Dev environment, pipeline, and service principal:
+**Setup:** Set up the pipeline, and service principal:
 
 ```bash
 az pipelines create --name $pipeline_name --description "Pipeline for project: '$repo'" --repository $repo --branch main --repository-type tfsgit --yml-path /.azdo/pipelines/azure-dev.yml --service-connection SERVICE_CONNECTION --skip-first-run true 
