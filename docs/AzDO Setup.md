@@ -73,7 +73,7 @@ $pipeline_name= "Azure Dev Deploy ('$repo')"
 $subscription_id=$(az account show --query "id" --output tsv)
 $rg_location='<your-resource group-location>'
 ```
-get service connection 
+Get service connection 
 
 ##### Dev
 ```bash
@@ -101,11 +101,10 @@ az login
 az devops configure --defaults organization=https://dev.azure.com/$org project=$project
 ```
 
-##### Dev
 
 **Setup:** Set up the Dev environment, pipeline, and service principal:
+
 ```bash
-azd env new $dev_env
 az pipelines create --name $pipeline_name --description "Pipeline for project: '$repo'" --repository $repo --branch main --repository-type tfsgit --yml-path /.azdo/pipelines/azure-dev.yml --service-connection SERVICE_CONNECTION --skip-first-run true 
 ```
 
@@ -166,9 +165,3 @@ az pipelines variable create --name 'AZURE_SUBSCRIPTION_ID' --value $subscriptio
     - This is the main file that triggers the deployment workflow. The environment names are passed as inputs to the deploy job.
   - `deploy-template.yml`
     - This is a template file invoked by `azure-dev.yml` that is used to deploy the infrastructure and services to Azure.
-
-# Additional Resources:
-
-- [Support multiple environments with `azd` (github.com)](https://github.com/jasontaylordev/todo-aspnetcore-csharp-sqlite/blob/main/OPTIONAL_FEATURES.md)
-- [Azure DevOps Services REST API Reference](https://learn.microsoft.com/en-us/rest/api/azure/devops/?view=azure-devops-rest-7.2)
-- [Azure DevOps CLI service endpoint](https://learn.microsoft.com/en-us/azure/devops/cli/service-endpoint?view=azure-devops)
